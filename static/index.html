@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PMO Delay Risk — Analyzer</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <div class="page">
+      <header class="header">
+        <div>
+          <h1>Project delay risk</h1>
+          <p class="tagline">
+            XGBoost score with SHAP explanations — enter project parameters and review the forecast,
+            narrative, and driver chart.
+          </p>
+        </div>
+        <a class="api-link" href="/docs" target="_blank" rel="noopener">API docs</a>
+      </header>
+
+      <main class="layout">
+        <section class="panel inputs-panel" aria-labelledby="inputs-heading">
+          <h2 id="inputs-heading">Project inputs</h2>
+          <form id="risk-form" class="form">
+            <label class="field">
+              <span class="label">Team size</span>
+              <input name="team_size" type="number" min="0" step="1" value="8" required />
+              <span class="hint">People assigned to the project</span>
+            </label>
+            <label class="field">
+              <span class="label">Days to deadline</span>
+              <input name="deadline_days" type="number" min="0" step="1" value="45" required />
+              <span class="hint">Calendar days remaining</span>
+            </label>
+            <label class="field">
+              <span class="label">Budget</span>
+              <input name="budget" type="number" min="0" step="1000" value="250000" required />
+              <span class="hint">Same units as training data</span>
+            </label>
+            <label class="field">
+              <span class="label">Task complexity</span>
+              <input name="task_complexity" type="number" min="0" step="0.1" value="5" required />
+              <span class="hint">Higher = more complex work</span>
+            </label>
+            <label class="field">
+              <span class="label">Dependencies</span>
+              <input name="dependencies_count" type="number" min="0" step="1" value="6" required />
+              <span class="hint">Linked upstream / downstream items</span>
+            </label>
+            <button type="submit" class="btn primary" id="submit-btn">Analyze delay risk</button>
+          </form>
+        </section>
+
+        <section class="panel results-panel" id="results" hidden aria-live="polite">
+          <h2>Results</h2>
+
+          <div class="inputs-summary" id="inputs-summary" aria-label="Submitted project inputs"></div>
+
+          <div class="risk-hero">
+            <div class="gauge-wrap">
+              <canvas id="chart-risk" aria-label="Delay risk proportion chart"></canvas>
+              <div class="gauge-center" aria-hidden="true">
+                <span class="gauge-pct" id="gauge-label">—</span>
+                <span class="gauge-sub">delay risk</span>
+              </div>
+            </div>
+            <div class="risk-meta">
+              <p class="pct-line">
+                <span class="pct-value" id="pct-display">—</span>
+                <span class="pct-suffix">% delay risk</span>
+              </p>
+              <p class="prob-sub" id="prob-sub"></p>
+            </div>
+          </div>
+
+          <div class="callout" id="explanation-box">
+            <h3>Explanation</h3>
+            <p id="explanation-text"></p>
+          </div>
+
+          <div class="chart-block">
+            <h3>Driver contributions (SHAP)</h3>
+            <p class="chart-help">
+              Bars show how each input pushes the predicted <strong>delay probability</strong> up (right) or
+              down (left) relative to the model baseline. This mirrors the narrative above.
+            </p>
+            <div class="shap-wrap">
+              <canvas id="chart-shap" height="260" aria-label="SHAP values by feature"></canvas>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <div class="toast" id="toast" role="status" hidden></div>
+
+      <footer class="footer">
+        <span>Served by FastAPI · Model: <code>models/delay_risk_xgb.joblib</code></span>
+      </footer>
+    </div>
+  </body>
+</html>
