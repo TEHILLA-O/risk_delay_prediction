@@ -7,7 +7,7 @@ Honest engineering notes for this project. Nothing here is invented for polish.
 - **Leaky time or project splits when training delay risk models.** Impact: over-optimistic PMO forecasts. Mitigation: keep training code (`train.py`) and serving (`predict.py` / FastAPI `app.py`) explicit; review split logic before trusting scores.
 - **SHAP or model artifacts missing at runtime.** Impact: UI explanation fails. Mitigation: `models/` directory ships with the app; fail clearly if artifacts are absent.
 - **Schema drift between training features and API payload.** Impact: silent bad scores. Mitigation: shared `schemas.py` / `config.py` for request and feature contracts.
-- **No README onboarding.** Impact: operators cannot reproduce the demo. Mitigation: this file plus reading `app.py` / `train.py` until a README is added.
+- **No README onboarding.** Impact: operators cannot reproduce the demo. Mitigation: README.md added on 1 November 2026 with a verified quick start.
 
 ## What went wrong
 
